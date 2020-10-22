@@ -96,6 +96,16 @@ bool Controller::isNewHeadPsitionOutOfMap(const Segment& newHead)
     return false;
 }
 
+
+void Controller::clearOldFood()
+{
+    DisplayInd clearOldFood;
+    clearOldFood.x = m_foodPosition.first;
+    clearOldFood.y = m_foodPosition.second;
+    clearOldFood.value = Cell_FREE;
+    m_displayPort.send(std::make_unique<EventT<DisplayInd>>(clearOldFood));
+}
+
 void Controller::receive(std::unique_ptr<Event> e)
 {
     try {
@@ -166,17 +176,21 @@ void Controller::receive(std::unique_ptr<Event> e)
                 if (requestedFoodCollidedWithSnake) {
                     m_foodPort.send(std::make_unique<EventT<FoodReq>>());
                 } else {
+                    /*
                     DisplayInd clearOldFood;
                     clearOldFood.x = m_foodPosition.first;
                     clearOldFood.y = m_foodPosition.second;
                     clearOldFood.value = Cell_FREE;
                     m_displayPort.send(std::make_unique<EventT<DisplayInd>>(clearOldFood));
+                    */
+                    clearOldFood();
 
                     DisplayInd placeNewFood;
                     placeNewFood.x = receivedFood.x;
                     placeNewFood.y = receivedFood.y;
                     placeNewFood.value = Cell_FOOD;
                     m_displayPort.send(std::make_unique<EventT<DisplayInd>>(placeNewFood));
+                    
                 }
 
                 m_foodPosition = std::make_pair(receivedFood.x, receivedFood.y);

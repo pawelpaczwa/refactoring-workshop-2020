@@ -52,6 +52,7 @@ private:
     void setNewHeadPosition(Segment& newHead);
     bool isNewHeadPositionCorrect(const Segment& newHead);
     bool isNewHeadPsitionOutOfMap(const Segment& newHead);
+    void clearOldFood();
 
 };
 
