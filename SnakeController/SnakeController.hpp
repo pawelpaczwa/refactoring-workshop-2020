@@ -50,6 +50,7 @@ private:
     std::list<Segment> m_segments;
 
     void setNewHeadPosition();
+    bool isNewHeadPositionCorrect(const Segment& newHead);
 
 };
 
