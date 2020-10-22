@@ -67,14 +67,11 @@ Controller::Controller(IPort& p_displayPort, IPort& p_foodPort, IPort& p_scorePo
 
 void Controller::setNewHeadPosition(Segment& newHead)
 {
-    Segment const& currentHead = m_segments.front()
+    Segment const& currentHead = m_segments.front();
 
-    Segment newHead;
     newHead.x = currentHead.x + ((m_currentDirection & 0b01) ? (m_currentDirection & 0b10) ? 1 : -1 : 0);
     newHead.y = currentHead.y + (not (m_currentDirection & 0b01) ? (m_currentDirection & 0b10) ? 1 : -1 : 0);
     newHead.ttl = currentHead.ttl;
-
-    return newHead;
 }
 
 bool Controller::isNewHeadPositionCorrect(const Segment& newHead)
@@ -85,6 +82,15 @@ bool Controller::isNewHeadPositionCorrect(const Segment& newHead)
             return true;
             break;
         }
+    }
+    return false;
+}
+
+bool Controller::isNewHeadPsitionOutOfMap(const Segment& newHead)
+{
+    if(newHead.x < 0 or newHead.y < 0 or newHead.x >= m_mapDimension.first or newHead.y >= m_mapDimension.second)
+    {
+        return true;
     }
 
     return false;
@@ -100,22 +106,12 @@ void Controller::receive(std::unique_ptr<Event> e)
         setNewHeadPosition(newHead);
 
         bool lost = isNewHeadPositionCorrect(newHead);
-/*      
-        for (auto segment : m_segments) {
-            if (segment.x == newHead.x and segment.y == newHead.y) {
-                m_scorePort.send(std::make_unique<EventT<LooseInd>>());
-                lost = true;
-                break;
-            }
-        }
-*/
+
         if (not lost) {
             if (std::make_pair(newHead.x, newHead.y) == m_foodPosition) {
                 m_scorePort.send(std::make_unique<EventT<ScoreInd>>());
                 m_foodPort.send(std::make_unique<EventT<FoodReq>>());
-            } else if (newHead.x < 0 or newHead.y < 0 or
-                       newHead.x >= m_mapDimension.first or
-                       newHead.y >= m_mapDimension.second) {
+            } else if (isNewHeadPsitionOutOfMap(newHead)) {
                 m_scorePort.send(std::make_unique<EventT<LooseInd>>());
                 lost = true;
             } else {

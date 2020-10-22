@@ -49,8 +49,9 @@ private:
     Direction m_currentDirection;
     std::list<Segment> m_segments;
 
-    void setNewHeadPosition();
+    void setNewHeadPosition(Segment& newHead);
     bool isNewHeadPositionCorrect(const Segment& newHead);
+    bool isNewHeadPsitionOutOfMap(const Segment& newHead);
 
 };
 
