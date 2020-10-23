@@ -63,7 +63,8 @@ Controller::Controller(IPort& p_displayPort, IPort& p_foodPort, IPort& p_scorePo
     }
 }
 
-void Controller::handleTimePassed(const TimeoutInd&)
+//void Controller::handleTimePassed(const TimeoutInd&)
+void Controller::handleTimePassed()
 {
     Segment newHead = getNewHead();
 
@@ -215,23 +216,28 @@ Controller::Segment Controller::getNewHead() const
 
 void Controller::receive(std::unique_ptr<Event> e)
 {
-    try {
-        handleTimePassed(*dynamic_cast<EventT<TimeoutInd> const&>(*e));
-    } catch (std::bad_cast&) {
-        try {
-            handleDirectionChange(*dynamic_cast<EventT<DirectionInd> const&>(*e));
-        } catch (std::bad_cast&) {
-            try {
-                handleFoodPositionChange(*dynamic_cast<EventT<FoodInd> const&>(*e));
-            } catch (std::bad_cast&) {
-                try {
-                    handleNewFood(*dynamic_cast<EventT<FoodResp> const&>(*e));
-                } catch (std::bad_cast&) {
-                    throw UnexpectedEventException();
-                }
-            }
-        }
+    if(e->getMessageId() == TimeoutInd::MESSAGE_ID)
+    {
+        
+       // TimeoutInd 
+        handleTimePassed();
+    } 
+    else if(e->getMessageId() == DirectionInd::MESSAGE_ID)
+    {
+        DirectionInd directionInd; // ?????
+        handleDirectionChange(directionInd);
     }
+    else if(e->getMessageId() == FoodInd::MESSAGE_ID)
+    {
+        FoodInd receivedFood; // ?????
+        handleFoodPositionChange(receivedFood);
+    }
+    else if(e->getMessageId() == FoodResp::MESSAGE_ID)
+    {
+        FoodResp requestedFood;
+        handleNewFood(requestedFood);
+    }
+    
 }
 
 } // namespace Snake
