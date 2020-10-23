@@ -224,18 +224,18 @@ void Controller::receive(std::unique_ptr<Event> e)
     } 
     else if(e->getMessageId() == DirectionInd::MESSAGE_ID)
     {
-        DirectionInd directionInd; // ?????
-        handleDirectionChange(directionInd);
+      //  DirectionInd directionInd; // ?????
+        handleDirectionChange(std::move(e);
     }
     else if(e->getMessageId() == FoodInd::MESSAGE_ID)
     {
-        FoodInd receivedFood; // ?????
-        handleFoodPositionChange(receivedFood);
+       // FoodInd receivedFood; // ?????
+        handleFoodPositionChange(std::move(e);
     }
     else if(e->getMessageId() == FoodResp::MESSAGE_ID)
     {
-        FoodResp requestedFood;
-        handleNewFood(requestedFood);
+       // FoodResp requestedFood;
+        handleNewFood(std::move(e);
     }
     
 }
